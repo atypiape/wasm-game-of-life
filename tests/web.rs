@@ -3,7 +3,12 @@
 #![cfg(target_arch = "wasm32")]
 
 extern crate wasm_bindgen_test;
+use std::assert_eq;
+
 use wasm_bindgen_test::*;
+
+extern crate wasm_game_of_life;
+use wasm_game_of_life::Universe;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
@@ -11,3 +16,30 @@ wasm_bindgen_test_configure!(run_in_browser);
 fn pass() {
     assert_eq!(1 + 1, 2);
 }
+
+#[wasm_bindgen_test]
+pub fn test_tick() {
+    let mut input_universe = input_spaceship();
+    let mut excepted_universe = excepted_spaceship();
+    input_universe.tick();
+    assert_eq!(input_universe.get_cells(), excepted_universe.get_cells());
+}
+
+#[cfg(test)]
+pub fn input_spaceship() -> Universe {
+    let mut universe = Universe::new();
+    universe.set_width(6);
+    universe.set_height(6);
+    universe.set_cells(&[(1,2), (2,3), (3,1), (3,2), (3,3)]);
+    universe
+}
+
+#[cfg(test)]
+pub fn excepted_spaceship() -> Universe {
+    let mut universe = Universe::new();
+    universe.set_width(6);
+    universe.set_height(6);
+    universe.set_cells(&[(1,2), (2,3), (3,1), (3,2), (3,3)]);
+    universe
+}
+
