@@ -9,6 +9,15 @@ module.exports = {
   },
   mode: "development",
   plugins: [
-    new CopyWebpackPlugin(['index.html'])
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "index.html" },
+      ]
+    })
   ],
+  // 支持 WebAssembly 打包
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true
+  },
 };

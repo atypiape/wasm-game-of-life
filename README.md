@@ -3,6 +3,7 @@
   <h1><code>wasm-game-of-life</code></h1>
 
   <strong>Implements Conway's Game of Life in Rust and WebAssembly.</strong>
+  <p>Use Webpack 5 to package the web code.</p>
 </div>
 
 ## 🚴 Usage
@@ -16,11 +17,12 @@ wasm-pack build
 ### 🔬 Test in Headless Browsers with `wasm-pack test`
 
 ```
-wasm-pack test --headless --firefox
+wasm-pack test --headless --chrome
 ```
 
-### 🎁 Publish to NPM with `wasm-pack publish`
+### 🎁 Start with `npm run start`
 
 ```
-wasm-pack publish
+cd www
+npm run start
 ```

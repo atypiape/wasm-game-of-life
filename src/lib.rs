@@ -138,7 +138,7 @@ impl Universe {
         }
         self.cells = next;
         self.tick_count += 1;
-        log!("tick count: {}", self.tick_count);
+        // log!("tick count: {}", self.tick_count);
     }
 }
 
