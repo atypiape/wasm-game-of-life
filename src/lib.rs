@@ -27,10 +27,12 @@ pub struct Universe {
 }
 
 impl Universe {
+    /// 获取对应行号列号的细胞索引
     fn get_index(&self, row: u32, col: u32) -> usize {
         (row * self.width + col) as usize
     }
 
+    /// 活着的邻居细胞数
     fn live_neighbor_count(&self, row: u32, col: u32) -> u8 {
         let mut count = 0;
         for detal_row in [self.height - 1, 0, 1] {
@@ -73,40 +75,52 @@ impl Universe {
         }
     }
 
+    /// 文本方式渲染宇宙细胞
     pub fn render(&self) -> String {
         self.to_string()
     }
 
-    /// Get width of the universe.
+    /// 获取宇宙的宽度
     pub fn width(&self) -> u32 {
         self.width
     }
 
-    /// Get height of the universe.
+    /// 获取宇宙的高度
     pub fn height(&self) -> u32 {
         self.height
     }
 
-    /// Set the width of the universe.
+    /// 设置宇宙的宽度
     ///
-    /// Reset all cells to the dead state.
+    /// 将所有细胞置为死亡状态
     pub fn set_width(&mut self, width: u32) {
         self.width = width;
         self.cells = FixedBitSet::with_capacity((width * self.height) as usize);
     }
 
-    /// Set the height of the universe.
+    /// 设置宇宙的高度
     ///
-    /// Reset all cells to the dead state.
+    /// 将所有细胞置为死亡状态
     pub fn set_height(&mut self, height: u32) {
         self.height = height;
         self.cells = FixedBitSet::with_capacity((self.width * height) as usize);
     }
 
+    /// 返回宇宙细胞切片指针
     pub fn cells(&self) -> *const usize {
         self.cells.as_slice().as_ptr()
     }
 
+    /// 反转细胞状态
+    /// 
+    /// 死的变活的，活的变死的
+    pub fn toggle_cell(&mut self, row: u32, col: u32) {
+        let idx = self.get_index(row, col);
+        let set = self.cells[idx];
+        self.cells.set(idx, !set);
+    }
+
+    /// 进行下一次宇宙细胞迭代
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
         for row in 0..self.height {

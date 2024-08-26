@@ -36,8 +36,8 @@ export class CellUniverse {
 
   /**
    * 判断指定位置的比特位是否为 1
-   * @param {number} row 表格行号
-   * @param {number} col 表格列号
+   * @param {number} row 单元格行号
+   * @param {number} col 单元格列号
    * @returns {boolean}
    */
   bitIsSet(row, col) {
@@ -46,6 +46,15 @@ export class CellUniverse {
     const idx = Math.floor(n / 8); // u8 数组索引
     const mask = 1 << n % 8; // 掩码，偏移到指定比特位
     return (cells[idx] & mask) === mask; // 与运算去除其余干扰比特，比较结果
+  }
+
+  /**
+   * 反转单元格状态，死的变活的，活的变死的
+   * @param {number} row 单元格行号
+   * @param {number} col 单元格列号 
+   */
+  toggleCell(row, col) {
+    this.universe?.toggle_cell(row, col);
   }
 
   /**
