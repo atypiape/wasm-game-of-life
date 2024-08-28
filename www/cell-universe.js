@@ -49,37 +49,18 @@ export class CellUniverse {
   }
 
   /**
-   * 反转单元格状态，死的变活的，活的变死的
-   * @param {number} row 单元格行号
-   * @param {number} col 单元格列号 
-   */
-  toggleCell(row, col) {
-    this.universe?.toggle_cell(row, col);
-  }
-
-  /**
-   * 重置所有细胞到初始状态
-   */
-  resetCells() {
-    this.universe?.reset();
-  }
-
-  /**
-   * 重置所有细胞为死亡状体
-   */
-  deadCells() {
-    this.universe?.dead();
-  }
-
-  /**
    * 宇宙前进一步
    */
   tick() {
     this.universe?.tick();
   }
 
+  /**
+   * 获取宇宙滴答数
+   * @returns {number}
+   */
   getTickCount() {
-    return this.universe?.tick_count();
+    return this.universe?.tick_count() || 0;
   }
 
   /**
@@ -107,5 +88,37 @@ export class CellUniverse {
     const size = Math.ceil((width * height) / 8);
     const cells = new Uint8Array(memory.buffer, cellsPtr, size);
     return cells;
+  }
+
+  /**
+   * 反转单元格状态，死的变活的，活的变死的
+   * @param {number} row 单元格行号
+   * @param {number} col 单元格列号 
+   */
+  toggleCell(row, col) {
+    this.universe?.toggle_cell(row, col);
+  }
+
+  /**
+   * 重置所有细胞到初始状态
+   */
+  resetCells() {
+    this.universe?.reset();
+  }
+
+  /**
+   * 重置所有细胞为死亡状体
+   */
+  deadCells() {
+    this.universe?.dead();
+  }
+
+  /**
+   * 在指定单元格中心添加滑翔机
+   * @param {number} row 单元格行号
+   * @param {number} col 单元格列号
+   */
+  addGlider(row, col) {
+    this.universe?.add_glider(row, col);
   }
 }

@@ -13,6 +13,16 @@
  * @property {(() => boolean) | null} onIsPaused 检查暂停回调函数
  */
 
+/**
+ * @enum {string}
+ * @readonly
+ */
+export const Keyboard = {
+  ALT: 'alt',
+  CTRL: 'ctrl',
+  SHIFT: 'shift',
+}
+
 export class AnimationControl {
   /** @type {HTMLButtonElement | null} @readonly @protected */
   playPauseButton;
@@ -25,6 +35,24 @@ export class AnimationControl {
 
   /** @type {HTMLInputElement | null} @readonly @protected */
   frameTickRange;
+
+  /**
+   * 是否只按下 Alt 键
+   * @type {boolean} @protected
+   */
+  onlyAltKey = false;
+
+  /**
+   * 是否只按下 Ctrl 键
+   * @type {boolean} @protected
+   */
+  onlyCtrlKey = false;
+
+  /**
+   * 是否只按下 Shift 键
+   * @type {boolean} @protected
+   */
+  onlyShiftKey = false;
 
   /** @type {(() => void) | null} @readonly @protected */
   onReset;
@@ -163,6 +191,38 @@ export class AnimationControl {
       this.frameTickCount = Number(frameTickRange.value);
       console.debug(`frameTickCount = ${this.frameTickCount}`);
     });
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'Alt':
+          this.onlyAltKey = true;
+          break;
+        case 'Control':
+          this.onlyCtrlKey = true;
+          break;
+        case 'Shift':
+          this.onlyShiftKey = true;
+          break;
+        default: return;
+      }
+      console.debug(`按下 ${event.key} 键`);
+    });
+
+    document.addEventListener('keyup', (event) => {
+      switch (event.key) {
+        case 'Alt':
+          this.onlyAltKey = false;
+          break;
+        case 'Control':
+          this.onlyCtrlKey = false;
+          break;
+        case 'Shift':
+          this.onlyShiftKey = false;
+          break;
+        default: return;
+      }
+      console.debug(`释放 ${event.key} 键`);
+    });
   }
 
   /**
@@ -197,5 +257,22 @@ export class AnimationControl {
    */
   getFrameTickCount() {
     return this.frameTickCount;
+  }
+
+  /**
+   * 是否只按下键盘某个键
+   * @param {Keyboard} key 按下的键
+   * @return {boolean}
+   */
+  isKeyDown(key) {
+    switch (key) {
+      case Keyboard.ALT:
+        return this.onlyAltKey;
+      case Keyboard.CTRL:
+        return this.onlyCtrlKey;
+      case Keyboard.SHIFT:
+        return this.onlyShiftKey;
+    }
+    return false;
   }
 }

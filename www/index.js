@@ -1,7 +1,7 @@
 // @ts-check
 import { GridCanvas } from "./grid-canvas";
 import { CellUniverse } from "./cell-universe";
-import { AnimationControl } from "./animation-control";
+import { AnimationControl, Keyboard } from "./animation-control";
 
 const CELL_SIZE = 10; // px
 const GRID_COLOR = "#CCCCCC";
@@ -29,8 +29,8 @@ const control = new AnimationControl({
   deadButtonSelector: "#dead",
   playButtonSelector: "#play-pause",
   rangeSelector: "#tick-range",
-  onReset,
-  onDead,
+  onReset: () => universe.resetCells(),
+  onDead: () => universe.deadCells(),
   onPlay: renderLoop,
   onPause,
   onIsPaused: isPaused,
@@ -55,15 +55,14 @@ function onCellDraw(row, col) {
  * @param {number} col 列号
  */
 function onCellClick(row, col) {
+  if (control.isKeyDown(Keyboard.ALT)) {
+    universe.addGlider(row, col);
+    return;
+  }
+  if (control.isKeyDown(Keyboard.SHIFT)) {
+    return;
+  }
   universe.toggleCell(row, col);
-}
-
-function onReset() {
-  universe.resetCells();
-}
-
-function onDead() {
-  universe.deadCells();
 }
 
 function onPause() {

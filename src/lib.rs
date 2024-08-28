@@ -143,6 +143,26 @@ impl Universe {
         self.cells.set(idx, !set);
     }
 
+    /// 在指定单元格中心添加滑翔机
+    pub fn add_glider(&mut self, row: u32, col: u32) {
+        let h = self.height;
+        let w = self.width;
+        let nine_grids = [
+            // 左上，中上，右上
+            (h - 1, w - 1, false), (h - 1, 0, false), (h - 1, 1, true),
+            // 左中，中中，右中
+            (0, w - 1, true), (0, 0, false), (0, 1, true),
+            // 左下，中下，右下
+            (1, w - 1, false), (1, 0, true), (1, 1, true),
+        ];
+        for (detal_row, detal_col, set) in nine_grids {
+            let the_row = (row + detal_row) % h;
+            let the_col = (col + detal_col) % w; 
+            let idx = self.get_index(the_row, the_col);
+            self.cells.set(idx, set);
+        }
+    }
+
     /// 进行下一次宇宙细胞迭代
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
