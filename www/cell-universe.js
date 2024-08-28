@@ -58,10 +58,28 @@ export class CellUniverse {
   }
 
   /**
+   * 重置所有细胞到初始状态
+   */
+  resetCells() {
+    this.universe?.reset();
+  }
+
+  /**
+   * 重置所有细胞为死亡状体
+   */
+  deadCells() {
+    this.universe?.dead();
+  }
+
+  /**
    * 宇宙前进一步
    */
   tick() {
     this.universe?.tick();
+  }
+
+  getTickCount() {
+    return this.universe?.tick_count();
   }
 
   /**

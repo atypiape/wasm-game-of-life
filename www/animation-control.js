@@ -2,15 +2,35 @@
 
 /**
  * @typedef {object} AnimationControlOptions
- * @property {string} buttonSelector 按钮元素选择起
+ * @property {string} resetButtonSelector 播放按钮元素选择器
+ * @property {string} deadButtonSelector 死亡按钮元素选择器
+ * @property {string} playButtonSelector 播放按钮元素选择器
+ * @property {string} rangeSelector 滑块元素选择器
+ * @property {(() => void) | null} onReset 重置按钮点击回调函数
+ * @property {(() => void) | null} onDead 死亡按钮点击回调函数
  * @property {(() => void) | null} onPlay 播放按钮点击回调函数
  * @property {(() => void) | null} onPause 暂停按钮点击回调函数
  * @property {(() => boolean) | null} onIsPaused 检查暂停回调函数
  */
 
 export class AnimationControl {
-  /** @type {HTMLButtonElement} @readonly @protected */
+  /** @type {HTMLButtonElement | null} @readonly @protected */
   playPauseButton;
+
+  /** @type {HTMLButtonElement | null} @readonly @protected */
+  resetButton;
+
+  /** @type {HTMLButtonElement | null} @readonly @protected */
+  deadButton;
+
+  /** @type {HTMLInputElement | null} @readonly @protected */
+  frameTickRange;
+
+  /** @type {(() => void) | null} @readonly @protected */
+  onReset;
+
+  /** @type {(() => void) | null} @readonly @protected */
+  onDead;
 
   /** @type {(() => void) | null} @readonly @protected */
   onPlay;
@@ -21,13 +41,46 @@ export class AnimationControl {
   /** @type {(() => boolean) | null} @readonly @protected */
   onIsPaused;
 
+  /** @type {number} @protected */
+  frameTickCount = 1;
+
   /**
    * 动画控制器
    * @param {AnimationControlOptions} options
    */
   constructor(options) {
-    const { buttonSelector = "", onPlay, onPause, onIsPaused } = options || {};
-    if (!buttonSelector) {
+    const {
+      resetButtonSelector,
+      deadButtonSelector,
+      playButtonSelector,
+      rangeSelector,
+      onReset,
+      onDead,
+      onPlay,
+      onPause,
+      onIsPaused,
+    } = options || {};
+    if (!resetButtonSelector) {
+      console.error(`[${AnimationControl.name}] resetButtonSelector 为空`);
+      return;
+    }
+    if (!deadButtonSelector) {
+      console.error(`[${AnimationControl.name}] deadButtonSelector 为空`);
+      return;
+    }
+    if (!playButtonSelector) {
+      console.error(`[${AnimationControl.name}] playButtonSelector 为空`);
+      return;
+    }
+    if (!onReset) {
+      console.error(`[${AnimationControl.name}] onReset 为空`);
+      return;
+    }
+    if (!onDead) {
+      console.error(`[${AnimationControl.name}] onDead 为空`);
+      return;
+    }
+    if (!onPlay) {
       console.error(`[${AnimationControl.name}] onPlay 为空`);
       return;
     }
@@ -41,13 +94,41 @@ export class AnimationControl {
     }
 
     /** @type {HTMLButtonElement | null} */
-    const playPauseButton = document.querySelector(buttonSelector);
-    if (!playPauseButton) {
-      console.error(`按钮元素 (${buttonSelector}) 未找到`);
+    const resetButton = document.querySelector(resetButtonSelector);
+    if (!resetButton) {
+      console.error(`重置按钮元素 (${resetButtonSelector}) 未找到`);
       return;
     }
 
+    /** @type {HTMLButtonElement | null} */
+    const deadButton = document.querySelector(deadButtonSelector);
+    if (!resetButton) {
+      console.error(`死亡按钮元素 (${resetButtonSelector}) 未找到`);
+      return;
+    }
+
+    /** @type {HTMLButtonElement | null} */
+    const playPauseButton = document.querySelector(playButtonSelector);
+    if (!playPauseButton) {
+      console.error(`播放按钮元素 (${playButtonSelector}) 未找到`);
+      return;
+    }
+
+    /** @type {HTMLInputElement | null} */
+    const frameTickRange = document.querySelector(rangeSelector);
+    if (!frameTickRange) {
+      console.error(`滑块元素 (${frameTickRange}) 未找到`);
+      return;
+    }
+
+    this.resetButton = resetButton;
+    this.deadButton = deadButton;
     this.playPauseButton = playPauseButton;
+    this.frameTickRange = frameTickRange;
+    this.frameTickCount = Number(frameTickRange.value);
+    this.frameTickStep = Number(frameTickRange.step);
+    this.onReset = onReset;
+    this.onDead = onDead;
     this.onPlay = onPlay;
     this.onPause = onPause;
     this.onIsParsed = onIsPaused;
@@ -57,12 +138,30 @@ export class AnimationControl {
    * 监听按钮点击事件
    */
   listen() {
-    this.playPauseButton?.addEventListener("click", () => {
+    const { resetButton, deadButton, playPauseButton, frameTickRange } = this;
+
+    resetButton?.addEventListener("click", () => {
+      this.onReset?.();
+      console.debug("重置");
+    });
+
+    deadButton?.addEventListener("click", () => {
+      this.onDead?.();
+      console.debug("死亡");
+    });
+
+
+    playPauseButton?.addEventListener("click", () => {
       if (this.onIsParsed?.()) {
         this.play();
       } else {
         this.pause();
       }
+    });
+
+    frameTickRange?.addEventListener("input", () => {
+      this.frameTickCount = Number(frameTickRange.value);
+      console.debug(`frameTickCount = ${this.frameTickCount}`);
     });
   }
 
@@ -90,5 +189,13 @@ export class AnimationControl {
     playPauseButton.textContent = "▶";
     this.onPause?.();
     console.debug("暂停");
+  }
+
+  /**
+   * 获取每一动画帧的滴答数
+   * @returns {number}
+   */
+  getFrameTickCount() {
+    return this.frameTickCount;
   }
 }

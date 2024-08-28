@@ -48,6 +48,13 @@ impl Universe {
         }
         count
     }
+
+    /// 重置所有宇宙细胞状态
+    fn reset_cells(cells: &mut FixedBitSet, size: usize) {
+        for i in 0..size {
+            cells.set(i, i % 2 == 0 || i % 7 == 0);
+        }
+    }
 }
 
 // 定义公共方法，导出给 JavaScript
@@ -60,10 +67,7 @@ impl Universe {
         let height = 64;
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
-
-        for i in 0..size {
-            cells.set(i, i % 2 == 0 || i % 7 == 0);
-        }
+        Self::reset_cells(&mut cells, size);
 
         // panic!();
 
@@ -72,6 +76,20 @@ impl Universe {
             height,
             cells,
             tick_count: 0,
+        }
+    }
+
+    /// 重置所有宇宙细胞为初始状态
+    pub fn reset(&mut self) {
+        let size = (self.width * self.height) as usize;
+        Self::reset_cells(&mut self.cells, size);
+    }
+
+    /// 重置所有宇宙细胞为死亡状态
+    pub fn dead(&mut self) {
+        let size = (self.width * self.height) as usize;
+        for i in 0..size {
+            self.cells.set(i, false);
         }
     }
 
@@ -88,6 +106,11 @@ impl Universe {
     /// 获取宇宙的高度
     pub fn height(&self) -> u32 {
         self.height
+    }
+
+    /// 获取当前滴答次数
+    pub fn tick_count(&self) -> usize {
+        self.tick_count
     }
 
     /// 设置宇宙的宽度

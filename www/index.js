@@ -25,7 +25,12 @@ const canvas = new GridCanvas("#game-of-life-canvas", {
 
 // 构建动画控制器
 const control = new AnimationControl({
-  buttonSelector: "#play-pause",
+  resetButtonSelector: "#reset",
+  deadButtonSelector: "#dead",
+  playButtonSelector: "#play-pause",
+  rangeSelector: "#tick-range",
+  onReset,
+  onDead,
   onPlay: renderLoop,
   onPause,
   onIsPaused: isPaused,
@@ -53,6 +58,14 @@ function onCellClick(row, col) {
   universe.toggleCell(row, col);
 }
 
+function onReset() {
+  universe.resetCells();
+}
+
+function onDead() {
+  universe.deadCells();
+}
+
 function onPause() {
   cancelAnimationFrame(animationId);
   animationId = null;
@@ -64,7 +77,10 @@ function isPaused() {
 
 function renderLoop() {
   canvas.draw();
-  universe.tick();
+  const count = control.getFrameTickCount();
+  for (let i = 0; i < count; ++i) {
+    universe.tick();
+  }
 
   animationId = requestAnimationFrame(renderLoop);
 };

@@ -16,17 +16,29 @@
         justify-content: center;
       }
 
-      #play-pause {
+      .buttons {
+        display: flex;
+        flex-direction: row;
+      }
+
+      #play-pause, #reset, #dead {
         width: 60px;
         font-size: 18px;
+        margin: 4px;
       }
     </style>
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
     
+    <input id="tick-range" type="range" min="0" max="10" step="1" value="0" />
     <canvas id="game-of-life-canvas"></canvas>
-    <button id="play-pause">||</button>
+    <div class="buttons">
+      <button id="play-pause">||</button>
+      <button id="reset">Reset</button>
+      <button id="dead">Dead</button>
+    </div>
+    
     <script src="./bootstrap.js"></script>
   </body>
 </html>
