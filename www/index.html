@@ -26,12 +26,18 @@
         font-size: 18px;
         margin: 4px;
       }
+
+      #fps {
+        white-space: pre;
+        font-family: monospace;
+      }
     </style>
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
     
-    <input id="tick-range" type="range" min="0" max="10" step="1" value="0" />
+    <div id="fps"></div>
+    <input id="tick-range" type="range" min="1" max="10" step="1" value="1" />
     <canvas id="game-of-life-canvas"></canvas>
     <div class="buttons">
       <button id="play-pause">||</button>

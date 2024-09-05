@@ -2,6 +2,7 @@
 import { GridCanvas } from "./grid-canvas";
 import { CellUniverse } from "./cell-universe";
 import { AnimationControl, Keyboard } from "./animation-control";
+import { fps } from "./fps";
 
 const CELL_SIZE = 10; // px
 const GRID_COLOR = "#CCCCCC";
@@ -75,6 +76,8 @@ function isPaused() {
 }
 
 function renderLoop() {
+  fps.render();
+
   canvas.draw();
   const count = control.getFrameTickCount();
   for (let i = 0; i < count; ++i) {
